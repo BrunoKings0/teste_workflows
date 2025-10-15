@@ -39,13 +39,13 @@ jobs:
         AwsTeam=$(echo "$ISSUE_BODY" | grep -E '^AwsTeam:' | sed -E 's/^AwsTeam:[[:space:]]*//')
         echo "AwsTeam='$AwsTeam'"
 
-        personal=$(echo "$ISSUE_BODY" | grep -Po 'Personal:\s*\[[^]]*\]' || echo "")
-        confidential=$(echo "$ISSUE_BODY" | grep -Po 'Confidential:\s*\[[^]]*\]' || echo "")
-        strictly=$(echo "$ISSUE_BODY" | grep -Po 'Strictly Confidential:\s*\[[^]]*\]' || echo "")
+        personal=$(echo "$ISSUE_BODY" | grep -Po '(?<=Personal:\s*)\[[^]]*\]' | head -n1 || echo "")
+        confidential=$(echo "$ISSUE_BODY" | grep -Po '(?<=Confidential:\s*)\[[^]]*\]' | head -n1 || echo "")
+        strictly=$(echo "$ISSUE_BODY" | grep -Po '(?<=Strictly Confidential:\s*)\[[^]]*\]' | head -n1 || echo "")
 
-        echo "Personal='$personal'"
-        echo "Confidential='$confidential'"
-        echo "Strictly='$strictly'"
+        echo "Personal=$personal"
+        echo "Confidential=$confidential"
+        echo "Strictly=$strictly"
 
         echo "aws_team=$AwsTeam" >> $GITHUB_OUTPUT
         echo "personal_list=$personal" >> $GITHUB_OUTPUT
