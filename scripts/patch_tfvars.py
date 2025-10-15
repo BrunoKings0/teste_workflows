@@ -11,7 +11,7 @@ def generate_block(confidential_level, domains):
   lf_tag_policy = [
     {{ lf_key = "data_zone", lf_values = ["curated"] }},
     {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
-    {{ lf_key = "domain", lf_values = ["{domains}"] }}
+    {{ lf_key = "domain", lf_values = {domains} }}
   ]
 }}"""
 

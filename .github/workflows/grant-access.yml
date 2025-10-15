@@ -39,9 +39,9 @@ jobs:
         AwsTeam=$(echo "$ISSUE_BODY" | grep -E '^AwsTeam:' | sed -E 's/^AwsTeam:[[:space:]]*//')
         echo "AwsTeam='$AwsTeam'"
 
-        personal=$(echo "$ISSUE_BODY" | grep -Po 'Personal:\s*\[\K[^\]]+' || echo "")
-        confidential=$(echo "$ISSUE_BODY" | grep -Po 'Confidential:\s*\[\K[^\]]+' || echo "")
-        strictly=$(echo "$ISSUE_BODY" | grep -Po 'Strictly Confidential:\s*\[\K[^\]]+' || echo "")
+        personal=$(echo "$ISSUE_BODY" | grep -Po 'Personal:\s*\[[^]]*\]' || echo "")
+        confidential=$(echo "$ISSUE_BODY" | grep -Po 'Confidential:\s*\[[^]]*\]' || echo "")
+        strictly=$(echo "$ISSUE_BODY" | grep -Po 'Strictly Confidential:\s*\[[^]]*\]' || echo "")
 
         echo "Personal='$personal'"
         echo "Confidential='$confidential'"
