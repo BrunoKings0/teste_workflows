@@ -59,3 +59,43 @@ jobs:
         PR_BRANCH="grant-${AWS_TEAM}-${{ github.event.issue.number }}"
         echo "branch=$PR_BRANCH" >> $GITHUB_OUTPUT
         git checkout -b "$PR_BRANCH"
+
+    - name: Generate patch (Python)
+      id: gen_patch
+      env:
+        TF_TEAM: ${{ steps.parse.outputs.aws_team }}
+        TF_PERSONAL: ${{ steps.parse.outputs.personal_list }}
+        TF_CONFIDENCIAL: ${{ steps.parse.outputs.confidential_list }}
+        TF_STRICTLY: ${{ steps.parse.outputs.strictly_list }}             
+             
+      run: |
+        python scripts/patch_tfvars.py > patch_out.txt
+
+    - name: Apply patch to production.tfvars
+      run: |
+        LINE=$(head -n 1 patch_out.txt)
+        MODE=$(echo "$LINE" | cut -d '|' -f1)
+        PATCH=$(echo "$LINE" | cut -d '|' -f2-)
+
+        echo "Mode: $MODE"
+        echo "Patch: $PATCH"
+
+        if [ "$MODE" = "insert" ]; then
+          # Inserir um novo time com blocos no mapa team_table_tags
+          sed -i "/^team_table_tags.*= *{/,/^}/ {
+            /^}/i \  $PATCH,
+          }" production.tfvars
+        elif [ "$MODE" = "append" ]; then
+          # Adicionar blocos ao final da lista do time existente antes do ']'
+          sed -i "/${TF_TEAM} = \\[/,/]/{ /]/i \    $PATCH, }" production.tfvars
+        else
+          echo "No changes needed or unknown mode"
+        fi
+
+    - name: Commit and push tfvars change
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git add production.tfvars
+        git commit -m "Update production.tfvars for ${{ steps.parse.outputs.aws_team }}" || echo "No changes to commit"
+        git push origin "${{ steps.branch.outputs.branch }}"
