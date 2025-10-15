@@ -76,6 +76,12 @@ jobs:
       run: |
         python scripts/patch_tfvars.py > patch_out.txt
 
+    - name: Show patch output
+      run: |
+        echo "=== Contents of patch_out.txt ==="
+        cat patch_out.txt
+        echo "================================="
+
     - name: Apply patch to production.tfvars
       run: |
         LINE=$(head -n 1 patch_out.txt)
