@@ -88,10 +88,6 @@ jobs:
         MODE=$(echo "$LINE" | cut -d '|' -f1)
         PATCH=$(sed '1s/^[^|]*|//g' patch_out.txt)
 
-        LINE=$(head -n 1 patch_out.txt)
-        MODE=$(echo "$LINE" | cut -d '|' -f1)
-        PATCH=$(echo "$LINE" | cut -d '|' -f2-)
-
         echo "Mode: $MODE"
         echo "Patch: $PATCH"
 
