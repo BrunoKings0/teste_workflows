@@ -89,7 +89,7 @@ jobs:
           # Inserir um novo time com blocos no mapa team_table_tags
           sed -i "/^team_table_tags.*= *{/,/^}/ {
             /^}/i \  $PATCH,
-          }" production.tfvars
+          }" conf/production.tfvars
         elif [ "$MODE" = "append" ]; then
           # Adicionar blocos ao final da lista do time existente antes do ']'
           sed -i "/${TF_TEAM} = \\[/,/]/{ /]/i \    $PATCH, }" production.tfvars
