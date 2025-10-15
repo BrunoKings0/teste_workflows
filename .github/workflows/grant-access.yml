@@ -60,7 +60,7 @@ jobs:
         echo "branch=$PR_BRANCH" >> $GITHUB_OUTPUT
         git checkout -b "$PR_BRANCH"
 
-    - name: Debug: show current directory and files
+    - name: Debug
       run: |
         pwd
         ls -R .
