@@ -89,16 +89,26 @@ jobs:
         PATCH=$(sed '1s/^[^|]*|//g' patch_out.txt)
 
         echo "Mode: $MODE"
-        echo "Patch: $PATCH"
+        echo "Patch:"
+        echo "$PATCH"
 
         if [ "$MODE" = "insert" ]; then
-          # Inserir um novo time com blocos no mapa team_table_tags
-          sed -i "/^team_table_tags.*= *{/,/^}/ {
-            /^}/i \  $PATCH,
-          }" conf/production.tfvars
+          # Cria um arquivo temporário com o patch
+          awk -v patch="$PATCH" '
+            BEGIN {in_block=0}
+            /^team_table_tags.*= *{/ {in_block=1}
+            in_block && /^}/ {print "  " patch ","; in_block=0}
+            {print}
+          ' conf/production.tfvars > tmp.tfvars
+          mv tmp.tfvars conf/production.tfvars
+
         elif [ "$MODE" = "append" ]; then
-          # Adicionar blocos ao final da lista do time existente antes do ']'
-          sed -i "/${TF_TEAM} = \\[/,/]/{ /]/i \    $PATCH, }" production.tfvars
+          awk -v team="$TF_TEAM" -v patch="$PATCH" '
+            $0 ~ team" = \\[" {in_team=1}
+            in_team && /^\]/ {print "    " patch ","; in_team=0}
+            {print}
+          ' conf/production.tfvars > tmp.tfvars
+          mv tmp.tfvars conf/production.tfvars
         else
           echo "No changes needed or unknown mode"
         fi
