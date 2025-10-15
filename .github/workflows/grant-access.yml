@@ -93,11 +93,17 @@ jobs:
         echo "$PATCH"
 
         if [ "$MODE" = "insert" ]; then
-          # Cria um arquivo temporário com o patch
           awk -v patch="$PATCH" '
             BEGIN {in_block=0}
             /^team_table_tags.*= *{/ {in_block=1}
-            in_block && /^}/ {print "  " patch ","; in_block=0}
+            in_block && /^}/ {
+              if (substr($0, length($0), 1) != ",") {
+                print "  " patch
+              } else {
+                print "  " patch ","
+              }
+              in_block=0
+            }
             {print}
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
