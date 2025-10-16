@@ -39,24 +39,39 @@ jobs:
         AwsTeam=$(echo "$ISSUE_BODY" | grep -E '^AwsTeam:' | sed -E 's/^AwsTeam:[[:space:]]*//')
         echo "AwsTeam='$AwsTeam'"
 
-        personal=$(awk '/Personal:/ {
+        personal="[]"
+        confidential="[]"
+        strictly="[]"
+
+        tmp=$(awk '/Personal:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
           }
         }' <<< "$ISSUE_BODY")
-        confidential=$(awk '/Confidential:/ {
+        if [ -n "$tmp" ]; then
+          personal="$tmp"
+        fi
+
+        tmp=$(awk '/Confidential:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
           }
         }' <<< "$ISSUE_BODY")
-        strictly=$(awk '/Strictly Confidential:/ {
+        if [ -n "$tmp" ]; then
+          confidential="$tmp"
+        fi
+
+        tmp=$(awk '/Strictly Confidential:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
           }
         }' <<< "$ISSUE_BODY")
+        if [ -n "$tmp" ]; then
+          strictly="$tmp"
+        fi
 
         echo "Personal=$personal"
         echo "Confidential=$confidential"
