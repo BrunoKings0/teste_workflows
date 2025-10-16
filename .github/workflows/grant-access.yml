@@ -125,11 +125,50 @@ jobs:
 
         elif [ "$MODE" = "append" ]; then
           awk -v team="$TF_TEAM" -v patch="$PATCH" '
-            $0 ~ team" = \\[" {in_team=1}
-            in_team && /^\]/ {print "    " patch ","; in_team=0}
-            {print}
+            BEGIN {
+              skip = 0
+              depth = 0
+              appended = 0
+            }
+            {
+              if (skip) {
+                # contando colchetes para sair do bloco do team
+                nopen = gsub(/\[/, "[", $0)
+                nclose = gsub(/\]/, "]", $0)
+                depth += nopen - nclose
+                if (depth <= 0) {
+                  skip = 0
+                }
+                next
+              }
+              # detectar início do sub-bloco do team a remover
+              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
+              if ($0 ~ pattern) {
+                skip = 1
+                depth = 1
+                next
+              }
+              # se ainda não inserimos e esta linha fecha o bloco pai (array principal)
+              if (!appended && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
+                # inserir novo sub-bloco do team antes desse fechamento
+                printf "  %s = [\n", team
+                printf "    %s\n", patch
+                printf "  ],\n"
+                appended = 1
+              }
+              print
+            }
+            END {
+              # se nunca inserimos (talvez não haja fechamento previsto), inserir no fim
+              if (!appended) {
+                printf "\n  %s = [\n", team
+                printf "    %s\n", patch
+                printf "  ]\n"
+              }
+            }
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
+
         else
           echo "No changes needed or unknown mode"
         fi
