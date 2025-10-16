@@ -139,7 +139,8 @@ jobs:
           mv tmp.tfvars conf/production.tfvars
 
         elif [ "$MODE" = "append" ]; then
-          awk -v team="$TF_TEAM" -v patch="$PATCH" '
+          AWS_TEAM="${{ steps.parse.outputs.aws_team }}"
+          awk -v team="$AWS_TEAM" -v patch="$PATCH" '
             BEGIN {
               skip = 0
               depth = 0
