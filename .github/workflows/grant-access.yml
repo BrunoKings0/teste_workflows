@@ -139,8 +139,8 @@ jobs:
           mv tmp.tfvars conf/production.tfvars
 
         elif [ "$MODE" = "append" ]; then
-          AWS_TEAM="${{ steps.parse.outputs.aws_team }}"
-          awk -v team="$AWS_TEAM" -v patch="$PATCH" '
+          aws_team="${{ steps.parse.outputs.aws_team }}"
+          awk -v team="$aws_team" -v patch="$PATCH" '
             BEGIN {
               skip = 0
               depth = 0
@@ -156,7 +156,7 @@ jobs:
                 }
                 next
               }
-              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
+              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\[" 
               if ($0 ~ pattern) {
                 skip = 1
                 depth = 1
@@ -164,13 +164,12 @@ jobs:
                 next
               }
               if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
-                printf "  %s = [\n", team
-                printf "    %s\n", patch
-                printf "  ],\n"
+                print "  " patch ","
                 found_team = 0
               }
-              print
+              next
             }
+            {print}
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
 
