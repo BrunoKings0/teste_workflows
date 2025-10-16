@@ -1,5 +1,17 @@
 import hcl2
 import os
+import json
+
+def parse_env_variable(var_name):
+    raw_value = os.environ.get(var_name, "[]")  
+    try:
+        parsed_value = json.loads(raw_value)
+        if isinstance(parsed_value, list):
+            return parsed_value
+        else:
+            return []
+    except json.JSONDecodeError:
+        return []
 
 def load_tfvars(path):
     with open(path, 'r') as f:
@@ -74,7 +86,6 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
         for level, new_list in [("personal", new_personal),
                              ("confidential", new_confidencial),
                              ("strictly_confidential", new_strictly)]:
-            print(new_list)
             if not new_list:
                 continue
             block = find_block_for_level(team_list, level)
@@ -107,9 +118,9 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
 
 if __name__ == "__main__":
     team = os.environ.get("TF_TEAM")
-    new_personal = os.environ.get("TF_PERSONAL")
-    new_confidencial = os.environ.get("TF_CONFIDENCIAL") 
-    new_strictly = os.environ.get("TF_STRICTLY")  
+    new_personal = parse_env_variable("TF_PERSONAL")
+    new_confidencial = parse_env_variable("TF_CONFIDENCIAL")
+    new_strictly = parse_env_variable("TF_STRICTLY")
 
     tfpath = "conf/production.tfvars"
     data = load_tfvars(tfpath)
