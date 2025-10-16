@@ -101,9 +101,6 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
                 patches.append((level, merged))
             else:
                 # Code cblock doesn't exists, add a new one
-                print("debug")
-                print(new_list)
-                print(type(new_list))
                 patches.append((level, new_list.copy()))
 
         if not patches:
