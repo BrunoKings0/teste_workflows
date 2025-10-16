@@ -143,11 +143,10 @@ jobs:
             BEGIN {
               skip = 0
               depth = 0
-              appended = 0
+              found_team = 0
             }
             {
               if (skip) {
-                # contando colchetes para sair do bloco do time
                 nopen = gsub(/\[/, "[", $0)
                 nclose = gsub(/\]/, "]", $0)
                 depth += nopen - nclose
@@ -156,30 +155,20 @@ jobs:
                 }
                 next
               }
-              # detectar início do sub-bloco do time a remover
               pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
               if ($0 ~ pattern) {
                 skip = 1
                 depth = 1
+                found_team = 1
                 next
               }
-              # se ainda não inserimos e esta linha fecha o bloco pai (array principal)
-              if (!appended && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
-                # inserir novo sub-bloco do time antes desse fechamento
+              if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
                 printf "  %s = [\n", team
                 printf "    %s\n", patch
                 printf "  ],\n"
-                appended = 1
+                found_team = 0
               }
               print
-            }
-            END {
-              # se nunca inserimos (talvez não haja fechamento previsto), inserir no fim
-              if (!appended) {
-                printf "\n  %s = [\n", team
-                printf "    %s\n", patch
-                printf "  ]\n"
-              }
             }
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
