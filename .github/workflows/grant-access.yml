@@ -104,9 +104,8 @@ jobs:
         TF_STRICTLY: ${{ steps.parse.outputs.strictly_list }}             
              
       run: |
-      #  python -u scripts/patch_tfvars.py
         python scripts/patch_tfvars.py > patch_out.txt
-
+        
     - name: Show patch output
       run: |
         echo "=== Contents of patch_out.txt ==="
