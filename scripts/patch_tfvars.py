@@ -74,6 +74,7 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
         for level, new_list in [("personal", new_personal),
                              ("confidential", new_confidencial),
                              ("strictly_confidential", new_strictly)]:
+            print(new_list)
             if not new_list:
                 continue
             block = find_block_for_level(team_list, level)
@@ -89,6 +90,9 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
                 patches.append((level, merged))
             else:
                 # Code cblock doesn't exists, add a new one
+                print("debug")
+                print(new_list)
+                print(type(new_list))
                 patches.append((level, new_list.copy()))
 
         if not patches:
