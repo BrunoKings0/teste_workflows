@@ -147,7 +147,7 @@ jobs:
             }
             {
               if (skip) {
-                # contando colchetes para sair do bloco do team
+                # contando colchetes para sair do bloco do time
                 nopen = gsub(/\[/, "[", $0)
                 nclose = gsub(/\]/, "]", $0)
                 depth += nopen - nclose
@@ -156,7 +156,7 @@ jobs:
                 }
                 next
               }
-              # detectar início do sub-bloco do team a remover
+              # detectar início do sub-bloco do time a remover
               pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
               if ($0 ~ pattern) {
                 skip = 1
@@ -165,7 +165,7 @@ jobs:
               }
               # se ainda não inserimos e esta linha fecha o bloco pai (array principal)
               if (!appended && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
-                # inserir novo sub-bloco do team antes desse fechamento
+                # inserir novo sub-bloco do time antes desse fechamento
                 printf "  %s = [\n", team
                 printf "    %s\n", patch
                 printf "  ],\n"
