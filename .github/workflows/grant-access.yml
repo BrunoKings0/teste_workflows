@@ -151,10 +151,12 @@ jobs:
                 nopen = gsub(/\[/, "[", $0)
                 nclose = gsub(/\]/, "]", $0)
                 depth += nopen - nclose
-                if (depth <= 0) {
+                if (depth > 0) {
+                  next
+                }
+                else {
                   skip = 0
                 }
-                next
               }
               pattern = "^[[:space:]]*" team "[[:space:]]*= *\\[" 
               if ($0 ~ pattern) {
