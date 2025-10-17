@@ -168,6 +168,7 @@ jobs:
                 printf "    %s\n", patch
                 printf "  ],\n"
                 found_team = 0
+                next
               }
               print
             }
