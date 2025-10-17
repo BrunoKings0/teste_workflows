@@ -164,12 +164,13 @@ jobs:
                 next
               }
               if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
-                print "  " patch ","
+                printf "  %s = [\n", team
+                printf "    %s\n", patch
+                printf "  ],\n"
                 found_team = 0
               }
-              next
+              print
             }
-            {print}
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
 

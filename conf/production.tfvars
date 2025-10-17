@@ -41,4 +41,10 @@ team_table_tags = {
       lf_tag_policy = [ { lf_key = "data_zone", lf_values = ["curated"] }, { lf_key = "data_confidentialitylevel", lf_values = ["confidential"] }, { lf_key = "domain", lf_values = ["BL_Orthodontics"] } ]
     }
   ]
+  StgCustTESTE = [
+    {
+      permission = ["DESCRIBE", "SELECT"]
+      lf_tag_policy = [ { lf_key = "data_zone", lf_values = ["curated"] }, { lf_key = "data_confidentialitylevel", lf_values = ["confidential"] }, { lf_key = "domain", lf_values = ["BL_Orthodontics"] } ]
+    }
+  ]
 }
