@@ -26,7 +26,7 @@ def generate_block(confidential_level, domains):
     {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
     {{ lf_key = "domain", lf_values = {domains_str} }}
   ]
-}}"""
+  }}"""
 
 
 def insert_new_teams(new_personal, new_confidencial,new_strictly):
@@ -100,7 +100,7 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
         for level, doms in patches:
             patch_parts.append(generate_block(level, doms))
 
-        patch = ",\n    ".join(patch_parts)
+        patch = ",\n  ".join(patch_parts)
         return ("append", patch)
 
 if __name__ == "__main__":
