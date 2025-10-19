@@ -18,12 +18,13 @@ def load_tfvars(path):
         return hcl2.load(f)
     
 def generate_block(confidential_level, domains):
+    domains_str = domains_list_to_str(domains)
     return f"""{{ 
   permission = ["DESCRIBE", "SELECT"]
   lf_tag_policy = [
     {{ lf_key = "data_zone", lf_values = ["curated"] }},
     {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
-    {{ lf_key = "domain", lf_values = {domains} }}
+    {{ lf_key = "domain", lf_values = {domains_str} }}
   ]
 }}"""
 
@@ -60,17 +61,6 @@ def get_domains_from_block(item):
 
 def domains_list_to_str(domains):
         return "[" + ", ".join(f'"{d}"' for d in domains) + "]"
-
-def generate_block_append(level, domains):
-        domains_str = domains_list_to_str(domains)
-        return f"""{{ 
-  permission = ["DESCRIBE", "SELECT"]
-  lf_tag_policy = [
-    {{ lf_key = "data_zone", lf_values = ["curated"] }},
-    {{ lf_key = "data_confidentialitylevel", lf_values = ["{level}"] }},
-    {{ lf_key = "domain", lf_values = {domains_str} }}
-  ]
-}}"""
 
 def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
     tags = data.get("team_table_tags", {})  
