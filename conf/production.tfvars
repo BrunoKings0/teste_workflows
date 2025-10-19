@@ -716,6 +716,7 @@ team_table_tags = {
     }
   ]
 }
+# end of the team_table_tags (please, don't remove this comment, it makes parts of the automated process)
 
 # ARN of teams associated IAM role
 teams_iam_role_arn = {
