@@ -19,15 +19,14 @@ def load_tfvars(path):
     
 def generate_block(confidential_level, domains):
     domains_str = domains_list_to_str(domains)
-    return f"""
-  {{ 
-  permission = ["DESCRIBE", "SELECT"]
-  lf_tag_policy = [
-    {{ lf_key = "data_zone", lf_values = ["curated"] }},
-    {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
-    {{ lf_key = "domain", lf_values = {domains_str} }}
-  ]
-  }}"""
+    return f"""  {{ 
+      permission = ["DESCRIBE", "SELECT"]
+      lf_tag_policy = [
+          {{ lf_key = "data_zone", lf_values = ["curated"] }},
+          {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
+          {{ lf_key = "domain", lf_values = {domains_str} }}
+      ]
+      }}"""
 
 
 def insert_new_teams(new_personal, new_confidencial,new_strictly):
