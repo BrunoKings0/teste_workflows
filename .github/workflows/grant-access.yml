@@ -43,7 +43,7 @@ jobs:
         confidential="[]"
         strictly="[]"
 
-        tmp=$(awk '/Personal:/ {
+        tmp=$(awk '/^Personal:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
@@ -53,7 +53,7 @@ jobs:
           personal="$tmp"
         fi
 
-        tmp=$(awk '/Confidential:/ {
+        tmp=$(awk '/^Confidential:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
@@ -63,7 +63,7 @@ jobs:
           confidential="$tmp"
         fi
 
-        tmp=$(awk '/Strictly Confidential:/ {
+        tmp=$(awk '/^Strictly Confidential:/ {
           if (match($0, /\[[^]]*\]/)) {
             print substr($0, RSTART, RLENGTH)
             exit
