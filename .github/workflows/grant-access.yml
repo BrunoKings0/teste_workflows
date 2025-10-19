@@ -120,7 +120,7 @@ jobs:
         if [ "$MODE" = "insert" ]; then
           awk -v patch="$PATCH" '
             BEGIN {in_block=0}
-            /^# end of the team_table_tags/ {print "  " patch "\n" $0; next}
+            /^# end of the team_table_tags/ {print patch "\n" $0; next}
             {print}
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
