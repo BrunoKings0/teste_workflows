@@ -735,7 +735,6 @@ team_table_tags = {
       lf_tag_policy = [ { lf_key = "data_zone", lf_values = ["raw", "refined"] }, { lf_key = "domain", lf_values = ["BL_ClinicalData"] } ]
     }
   ]
-}
   StgCustDlkLatamDaDtEngbFinalTest = [
     { 
       permission = ["DESCRIBE", "SELECT"]
@@ -762,7 +761,7 @@ team_table_tags = {
       ]
     }
   ]
-# end of the team_table_tags (please, don't remove this comment, it makes parts of the automated process)
+}# end of the team_table_tags (please, don't remove this comment, it makes parts of the automated process)
 
 # ARN of teams associated IAM role
 teams_iam_role_arn = {
