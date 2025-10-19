@@ -736,32 +736,7 @@ team_table_tags = {
     }
   ]
 }
-StgCustDlkLatamDaDtEngbFinalTest = [
-    { 
-      permission = ["DESCRIBE", "SELECT"]
-      lf_tag_policy = [
-          { lf_key = "data_zone", lf_values = ["curated"] },
-          { lf_key = "data_confidentialitylevel", lf_values = ["personal"] },
-          { lf_key = "domain", lf_values = ["Uno", "Dos", "Tres"] }
-      ]
-    },
-    { 
-      permission = ["DESCRIBE", "SELECT"]
-      lf_tag_policy = [
-          { lf_key = "data_zone", lf_values = ["curated"] },
-          { lf_key = "data_confidentialitylevel", lf_values = ["confidentonal"] },
-          { lf_key = "domain", lf_values = ["Uno"] }
-      ]
-    },
-    { 
-      permission = ["DESCRIBE", "SELECT"]
-      lf_tag_policy = [
-          { lf_key = "data_zone", lf_values = ["curated"] },
-          { lf_key = "data_confidentialitylevel", lf_values = ["strictly_confidentonal"] },
-          { lf_key = "domain", lf_values = ["Ciatro"] }
-      ]
-    }
-  ]
+
 # end of the team_table_tags (please, don't remove this comment, it makes parts of the automated process)
 
 # ARN of teams associated IAM role

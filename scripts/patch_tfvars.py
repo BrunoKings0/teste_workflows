@@ -68,7 +68,7 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
 
     if team_list is None:
         block = insert_new_teams(new_personal, new_confidencial,new_strictly)
-        patch = f"{team} = [\n{block}\n  ]"
+        patch = f"  {team} = [\n{block}\n  ]"
         return ("insert", patch)
     else:
         patches = []
