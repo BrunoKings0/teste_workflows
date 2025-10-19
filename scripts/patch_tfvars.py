@@ -19,7 +19,8 @@ def load_tfvars(path):
     
 def generate_block(confidential_level, domains):
     domains_str = domains_list_to_str(domains)
-    return f"""{{ 
+    return f"""
+  {{ 
   permission = ["DESCRIBE", "SELECT"]
   lf_tag_policy = [
     {{ lf_key = "data_zone", lf_values = ["curated"] }},

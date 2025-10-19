@@ -90,11 +90,6 @@ jobs:
         echo "branch=$PR_BRANCH" >> $GITHUB_OUTPUT
         git checkout -b "$PR_BRANCH"
 
-    - name: Debug
-      run: |
-        pwd
-        ls -R .
-
     - name: Generate patch (Python)
       id: gen_patch
       env:
