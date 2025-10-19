@@ -64,7 +64,6 @@ def domains_list_to_str(domains):
 
 def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
     tags = data.get("team_table_tags", {}) 
-    print(tags)
     team_list = tags.get(team)
 
     if team_list is None:
