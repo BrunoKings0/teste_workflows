@@ -154,7 +154,7 @@ jobs:
               }
               if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
                 printf "  %s = [\n", team
-                printf "    %s\n", patch
+                printf "%s\n", patch
                 printf "  ]\n"
                 found_team = 0
                 next
