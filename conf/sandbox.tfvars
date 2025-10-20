@@ -767,7 +767,7 @@ team_table_tags = {
       lf_tag_policy = [
           { lf_key = "data_zone", lf_values = ["curated"] },
           { lf_key = "data_confidentialitylevel", lf_values = ["personal"] },
-          { lf_key = "domain", lf_values = ["Bulbasaur", "Zapzos"] }
+          { lf_key = "domain", lf_values = ["Bulbasaur", "Zapzos", "Moltres"] }
       ]
     },
     { 
@@ -783,7 +783,7 @@ team_table_tags = {
       lf_tag_policy = [
           { lf_key = "data_zone", lf_values = ["curated"] },
           { lf_key = "data_confidentialitylevel", lf_values = ["strictly_confidential"] },
-          { lf_key = "domain", lf_values = ["Zapzos"] }
+          { lf_key = "domain", lf_values = ["Zapzos", "Moltres"] }
       ]
     }
   ]
