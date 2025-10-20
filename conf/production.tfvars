@@ -739,9 +739,9 @@ team_table_tags = {
     { 
       permission = ["DESCRIBE", "SELECT"]
       lf_tag_policy = [
-          { lf_key = "data_zone", lf_values = ["raw","curated"] },
+          { lf_key = "data_zone", lf_values = ["raw", "curated"] },
           { lf_key = "data_confidentialitylevel", lf_values = ["personal"] },
-          { lf_key = "domain", lf_values = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"] }
+          { lf_key = "domain", lf_values = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete"] }
       ]
     },
     { 
