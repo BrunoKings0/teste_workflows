@@ -76,9 +76,9 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
         for level, new_list in [("personal", new_personal),
                              ("confidential", new_confidencial),
                              ("strictly_confidential", new_strictly)]:
-            if not new_list:
-                continue
             block = find_block_for_level(team_list, level)
+            if not new_list and block is None:
+                continue
             if block is not None:
                 # block already exists - mix code
                 existing = get_domains_from_block(block)
