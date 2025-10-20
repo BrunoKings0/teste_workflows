@@ -741,7 +741,7 @@ team_table_tags = {
       lf_tag_policy = [
           { lf_key = "data_zone", lf_values = ["curated"] },
           { lf_key = "data_confidentialitylevel", lf_values = ["personal"] },
-          { lf_key = "domain", lf_values = ["Uno", "Dos", "Tres", "Cuatro", "Cinco"] }
+          { lf_key = "domain", lf_values = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"] }
       ]
     },
     { 
@@ -749,7 +749,7 @@ team_table_tags = {
       lf_tag_policy = [
           { lf_key = "data_zone", lf_values = ["curated"] },
           { lf_key = "data_confidentialitylevel", lf_values = ["confidential"] },
-          { lf_key = "domain", lf_values = ["Dos", "Tres", "Cuatro"] }
+          { lf_key = "domain", lf_values = ["Dos", "Tres", "Cuatro", "Cinco"] }
       ]
     },
     { 
