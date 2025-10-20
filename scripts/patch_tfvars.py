@@ -33,11 +33,11 @@ def generate_block(confidential_level, domains, data_zones):
 def insert_new_teams(new_personal, new_confidencial,new_strictly):
     grant =[]
     if new_personal:
-        grant.append(generate_block("personal",new_personal))
+        grant.append(generate_block("personal",new_personal, '["curated]'))
     if new_confidencial:
-        grant.append(generate_block("confidentonal",new_confidencial))
+        grant.append(generate_block("confidentonal",new_confidencial, '["curated]'))
     if new_strictly:
-        grant.append(generate_block("strictly_confidentonal",new_strictly))
+        grant.append(generate_block("strictly_confidentonal",new_strictly, '["curated]'))
 
     if not grant:
         return "" 
