@@ -17,12 +17,13 @@ def load_tfvars(path):
     with open(path, 'r') as f:
         return hcl2.load(f)
     
-def generate_block(confidential_level, domains):
-    domains_str = domains_list_to_str(domains)
+def generate_block(confidential_level, domains, data_zones):
+    domains_str = list_to_str(domains)
+    data_zones_str = list_to_str(data_zones)
     return f"""    {{ 
       permission = ["DESCRIBE", "SELECT"]
       lf_tag_policy = [
-          {{ lf_key = "data_zone", lf_values = ["curated"] }},
+          {{ lf_key = "data_zone", lf_values = {data_zones_str} }},
           {{ lf_key = "data_confidentialitylevel", lf_values = ["{confidential_level}"] }},
           {{ lf_key = "domain", lf_values = {domains_str} }}
       ]
@@ -59,7 +60,13 @@ def get_domains_from_block(item):
                 return list(tag.get('lf_values', []))
         return []
 
-def domains_list_to_str(domains):
+def get_data_zone_from_block(item):
+        for tag in item.get('lf_tag_policy', []):
+            if tag.get('lf_key') == "data_zone":
+                return list(tag.get('lf_values', []))
+        return ["curated"]
+
+def list_to_str(domains):
         return "[" + ", ".join(f'"{d}"' for d in domains) + "]"
 
 def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
@@ -83,22 +90,23 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
                 # block already exists - mix code
                 existing = get_domains_from_block(block)
                 # add new domains
+                data_zones = get_data_zone_from_block(block)
                 merged = existing.copy()
                 for dom in new_list:
                     if dom not in merged:
                         merged.append(dom)
                 # generate new updated code block
-                patches.append((level, merged))
+                patches.append((level, merged, data_zones))
             else:
-                # Code cblock doesn't exists, add a new one
-                patches.append((level, new_list.copy()))
+                # Code block doesn't exists, add a new one
+                patches.append((level, new_list.copy(), '["curated"]'))
 
         if not patches:
             return ("none", "")
 
         patch_parts = []
-        for level, doms in patches:
-            patch_parts.append(generate_block(level, doms))
+        for level, doms, data_zones in patches:
+            patch_parts.append(generate_block(level, doms, data_zones))
 
         patch = ",\n".join(patch_parts)
         return ("append", patch)
