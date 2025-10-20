@@ -751,6 +751,14 @@ team_table_tags = {
           { lf_key = "data_confidentialitylevel", lf_values = ["confidential"] },
           { lf_key = "domain", lf_values = ["Dos", "Tres", "Cuatro"] }
       ]
+    },
+    { 
+      permission = ["DESCRIBE", "SELECT"]
+      lf_tag_policy = [
+          { lf_key = "data_zone", lf_values = ["curated"] },
+          { lf_key = "data_confidentialitylevel", lf_values = ["strictly_confidential"] },
+          { lf_key = "domain", lf_values = ["Uno"] }
+      ]
     }
   ]
 }# end of the team_table_tags (please, don't remove this comment, it makes parts of the automated process)
