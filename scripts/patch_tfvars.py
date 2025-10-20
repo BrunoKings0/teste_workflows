@@ -99,7 +99,7 @@ def generate_patch(data, team, new_personal, new_confidencial, new_strictly):
                 patches.append((level, merged, data_zones))
             else:
                 # Code block doesn't exists, add a new one
-                patches.append((level, new_list.copy(), '["curated"]'))
+                patches.append((level, new_list.copy(), ["curated"]))
 
         if not patches:
             return ("none", "")
