@@ -92,33 +92,44 @@ jobs:
         echo "branch=$PR_BRANCH" >> $GITHUB_OUTPUT
         git checkout -b "$PR_BRANCH"
 
-    - name: Generate patch (Python)
-      id: gen_patch
+    - name: Generate patch for prod
+      id: gen_patch_prod
       env:
+        TF_ENV: prod
         TF_TEAM: ${{ steps.parse.outputs.aws_team }}
         TF_PERSONAL: ${{ steps.parse.outputs.personal_list }}
         TF_CONFIDENCIAL: ${{ steps.parse.outputs.confidential_list }}
-        TF_STRICTLY: ${{ steps.parse.outputs.strictly_list }}             
-             
+        TF_STRICTLY: ${{ steps.parse.outputs.strictly_list }}
       run: |
-        python scripts/patch_tfvars.py > patch_out.txt
+        python scripts/patch_tfvars.py > patch_out_prod.txt
+
+    - name: Generate patch for dev
+      id: gen_patch_dev
+      env:
+        TF_ENV: sandbox
+        TF_TEAM: ${{ steps.parse.outputs.aws_team }}
+        TF_PERSONAL: ${{ steps.parse.outputs.personal_list }}
+        TF_CONFIDENCIAL: ${{ steps.parse.outputs.confidential_list }}
+        TF_STRICTLY: ${{ steps.parse.outputs.strictly_list }}
+      run: |
+        python scripts/patch_tfvars.py > patch_out_dev.txt
         
     - name: Show patch output
       run: |
         echo "=== Contents of patch_out.txt ==="
-        cat patch_out.txt
-        echo "================================="
+        cat patch_out_prod.txt
+        echo "=== Contents of patch_out_dev.txt ==="
+        cat patch_out_dev.txt
 
-    - name: Apply patch to production.tfvars
+    - name: Apply patch to prod and dev tfvars
       run: |
-        LINE=$(head -n 1 patch_out.txt)
+        # Process prod
+        LINE=$(head -n 1 patch_out_prod.txt)
         MODE=$(echo "$LINE" | cut -d '|' -f1)
-        PATCH=$(sed '1s/^[^|]*|//g' patch_out.txt)
-
-        echo "Mode: $MODE"
-        echo "Patch:"
+        PATCH=$(sed '1s/^[^|]*|//g' patch_out_prod.txt)
+        echo "Prod Mode: $MODE"
+        echo "Prod Patch:"
         echo "$PATCH"
-
         if [ "$MODE" = "insert" ]; then
           awk -v patch="$PATCH" '
             BEGIN {in_block=0}
@@ -126,54 +137,80 @@ jobs:
             {print}
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
-
         elif [ "$MODE" = "append" ]; then
           aws_team="${{ steps.parse.outputs.aws_team }}"
           awk -v team="$aws_team" -v patch="$PATCH" '
-            BEGIN {
-              skip = 0
-              depth = 0
-              found_team = 0
-            }
+            BEGIN {skip=0; depth=0; found_team=0}
             {
               if (skip) {
                 nopen = gsub(/\[/, "[", $0)
                 nclose = gsub(/\]/, "]", $0)
                 depth += nopen - nclose
-                if (depth > 0) {
-                  next
-                }
-                else {
-                  skip = 0
-                }
+                if (depth > 0) { next } else { skip=0 }
               }
-              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\[" 
-              if ($0 ~ pattern) {
-                skip = 1
-                depth = 1
-                found_team = 1
-                next
-              }
+              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
+              if ($0 ~ pattern) { skip=1; depth=1; found_team=1; next }
               if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
                 printf "  %s = [\n", team
                 printf "%s\n", patch
                 printf "  ]\n"
-                found_team = 0
+                found_team=0
                 next
               }
               print
             }
           ' conf/production.tfvars > tmp.tfvars
           mv tmp.tfvars conf/production.tfvars
-
         else
-          echo "No changes needed or unknown mode"
+          echo "No changes needed or unknown mode for prod"
+        fi
+
+        # Process dev
+        LINE=$(head -n 1 patch_out_dev.txt)
+        MODE=$(echo "$LINE" | cut -d '|' -f1)
+        PATCH=$(sed '1s/^[^|]*|//g' patch_out_dev.txt)
+        echo "Dev Mode: $MODE"
+        echo "Dev Patch:"
+        echo "$PATCH"
+        if [ "$MODE" = "insert" ]; then
+          awk -v patch="$PATCH" '
+            BEGIN {in_block=0}
+            /^# end of the team_table_tags/ {print patch "\n" $0; next}
+            {print}
+          ' conf/sandbox.tfvars > tmp.tfvars
+          mv tmp.tfvars conf/sandbox.tfvars
+        elif [ "$MODE" = "append" ]; then
+          aws_team="${{ steps.parse.outputs.aws_team }}"
+          awk -v team="$aws_team" -v patch="$PATCH" '
+            BEGIN {skip=0; depth=0; found_team=0}
+            {
+              if (skip) {
+                nopen = gsub(/\[/, "[", $0)
+                nclose = gsub(/\]/, "]", $0)
+                depth += nopen - nclose
+                if (depth > 0) { next } else { skip=0 }
+              }
+              pattern = "^[[:space:]]*" team "[[:space:]]*= *\\["
+              if ($0 ~ pattern) { skip=1; depth=1; found_team=1; next }
+              if (found_team && $0 ~ /^[[:space:]]*\](,)?[[:space:]]*$/) {
+                printf "  %s = [\n", team
+                printf "%s\n", patch
+                printf "  ]\n"
+                found_team=0
+                next
+              }
+              print
+            }
+          ' conf/sandbox.tfvars > tmp.tfvars
+          mv tmp.tfvars conf/sandbox.tfvars
+        else
+          echo "No changes needed or unknown mode for dev"
         fi
 
     - name: Commit and push tfvars change
       run: |
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor }}@users.noreply.github.com"
-        git add conf/production.tfvars
-        git commit -m "Update production.tfvars for ${{ steps.parse.outputs.aws_team }}" || echo "No changes to commit"
+        git add conf/production.tfvars conf/sandbox.tfvars
+        git commit -m "Update tfvars for ${{ steps.parse.outputs.aws_team }}" || echo "No changes to commit"
         git push origin "${{ steps.branch.outputs.branch }}"

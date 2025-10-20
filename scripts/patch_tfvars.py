@@ -117,7 +117,17 @@ if __name__ == "__main__":
     new_confidencial = parse_env_variable("TF_CONFIDENCIAL")
     new_strictly = parse_env_variable("TF_STRICTLY")
 
-    tfpath = "conf/production.tfvars"
+    env = os.environ.get("TF_ENV", "prod")
+
+    if env == "prod":
+        tfpath = "conf/production.tfvars"
+    elif env == "sandbox":
+        tfpath = "conf/sandbox.tfvars"
+    else:
+        print(f"Unknown environment '{env}', defaulting to prod.")
+        tfpath = "config/prod/production.tfvars"
+
+    #tfpath = "conf/production.tfvars"
     data = load_tfvars(tfpath)
     mode, patch = generate_patch(data, team, new_personal, new_confidencial, new_strictly)
     print(mode + "|" + patch)  
